@@ -18,6 +18,9 @@ jobs:
       with:
         node-version: '18'
 
+    - name: 📦 Install project dependencies (faker included)
+      run: npm install
+
     - name: 📦 Install Newman
       run: npm install -g newman
 
