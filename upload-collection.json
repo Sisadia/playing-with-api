@@ -1,0 +1,71 @@
+{
+	"info": {
+		"_postman_id": "3fea2afe-dc74-4452-a060-771c0258a53c",
+		"name": "csv-api",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "42456567"
+	},
+	"item": [
+		{
+			"name": "Upload",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "accept",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "file",
+							"type": "file",
+							"src": "Self/csv-upload-api/git/temp.csv"
+						}
+					]
+				},
+				"url": {
+					"raw": "https://playing-with-api.onrender.com/upload",
+					"protocol": "https",
+					"host": [
+						"playing-with-api",
+						"onrender",
+						"com"
+					],
+					"path": [
+						"upload"
+					]
+				},
+				"description": "Generated from cURL: curl -X 'POST' \\\r\n  'https://playing-with-api.onrender.com/upload' \\\r\n  -H 'accept: application/json' \\\r\n  -H 'Content-Type: multipart/form-data' \\\r\n  -F 'file='"
+			},
+			"response": []
+		},
+		{
+			"name": "Users",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "accept",
+						"value": "application/json"
+					}
+				],
+				"url": {
+					"raw": "https://playing-with-api.onrender.com/users",
+					"protocol": "https",
+					"host": [
+						"playing-with-api",
+						"onrender",
+						"com"
+					],
+					"path": [
+						"users"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
