@@ -1,0 +1,31 @@
+name: Run Newman Tests on Render API
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  run-newman-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: 📥 Checkout code
+      uses: actions/checkout@v3
+
+    - name: 🛠 Install Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+
+    - name: 📦 Install Newman
+      run: npm install -g newman
+
+    - name: 🧪 Generate CSV file
+      run: node generate-csv.js
+
+    - name: ✅ Run Newman tests
+      run: |
+        newman run upload-collection.json \
+          --env-var base_url=https://playing-with-api.onrender.com \
+          --env-var file=@temp.csv
