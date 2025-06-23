@@ -23,6 +23,61 @@ async function initDB() {
   await db.write();
 }
 
+/**
+ * @swagger
+ * /upload:
+ *   post:
+ *     summary: Upload a CSV file to onboard users
+ *     tags:
+ *       - Upload
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               file:
+ *                 type: string
+ *                 format: binary
+ *                 description: The CSV file containing user data
+ *     responses:
+ *       200:
+ *         description: Users uploaded successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: success
+ *                 message:
+ *                   type: string
+ *                   example: Users uploaded successfully.
+ *       400:
+ *         description: No file uploaded or invalid file format
+ *       409:
+ *         description: Duplicate emails found in the file
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: error
+ *                 message:
+ *                   type: string
+ *                   example: Duplicate emails found. Upload failed.
+ *                 duplicates:
+ *                   type: array
+ *                   items:
+ *                     type: string
+ *                     example: jane.doe@yopmail.com
+ *       500:
+ *         description: Internal server error during upload
+ */
 app.post('/upload', upload.single('file'), async (req, res) => {
   try {
     await initDB();
@@ -95,6 +150,38 @@ app.post('/upload', upload.single('file'), async (req, res) => {
   }
 });
 
+
+
+
+/**
+ * @swagger
+ * /users:
+ *   get:
+ *     summary: Get all users
+ *     tags:
+ *       - Users
+ *     responses:
+ *       200:
+ *         description: A list of onboarded users
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 users:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       email:
+ *                         type: string
+ *                         example: john.doe@yopmail.com
+ *                       raw:
+ *                         type: string
+ *                         description: Raw CSV line data
+ *       500:
+ *         description: Server error while fetching users
+ */
 app.get('/users', async (req, res) => {
   try {
     await initDB();
