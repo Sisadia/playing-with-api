@@ -5,6 +5,9 @@ const fs = require('fs');
 const path = require('path');
 const { Low } = require('lowdb');
 const { JSONFile } = require('lowdb/node');
+const swaggerUi = require('swagger-ui-express');
+const swaggerJsdoc = require('swagger-jsdoc');
+
 
 const app = express();
 const upload = multer({ dest: 'uploads/' });
@@ -117,3 +120,18 @@ app.delete('/reset', async (req, res) => {
 app.listen(3000, () => {
   console.log('🚀 Server running at http://localhost:3000');
 });
+
+const options = {
+  definition: {
+    openapi: "3.0.0",
+    info: {
+      title: "CSV Upload API",
+      version: "1.0.0",
+      description: "API for uploading and listing users from CSV",
+    },
+  },
+  apis: ["./server.js"], // You can document endpoints using JSDoc-style comments
+};
+
+const swaggerSpec = swaggerJsdoc(options);
+app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
