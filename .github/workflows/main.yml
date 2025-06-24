@@ -34,7 +34,7 @@ jobs:
       run: |
         npx newman run upload-collection.json \
           --env-var base_url=https://playing-with-api.onrender.com \
-          --env-var file=@temp.csv
+          --env-var file=@temp.csv \
           --reporters cli,json \
           --reporter-json-export newman-report.json
 
