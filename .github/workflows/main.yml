@@ -1,7 +1,11 @@
 name: Run Newman Tests on Render API
 
 on:
-  schedule:
+push:
+    branches:
+      - main    # or your default branch
+    workflow_dispatch: # allows manual run from Actions tab
+    schedule:
     - cron: '0 * * * *'  # runs every hour
 
 jobs:
