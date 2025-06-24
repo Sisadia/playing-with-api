@@ -1,9 +1,8 @@
 name: Run Newman Tests on Render API
 
 on:
-  push:
-    branches: [ main ]
-  workflow_dispatch:
+  schedule:
+    - cron: '0 * * * *'  # runs every hour
 
 jobs:
   run-newman-tests:
@@ -29,6 +28,23 @@ jobs:
 
     - name: ✅ Run Newman tests
       run: |
-        newman run upload-collection.json \
+        npx newman run upload-collection.json \
           --env-var base_url=https://playing-with-api.onrender.com \
           --env-var file=@temp.csv
+          --reporters cli,json \
+          --reporter-json-export newman-report.json
+
+
+    - name: 📲 Send Telegram Notification
+      if: always()
+      run: |
+        curl -s -X POST https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage \
+        -d chat_id=${{ secrets.TELEGRAM_CHAT_ID }} \
+        -d parse_mode=Markdown \
+        -d text="🧪 *Newman Test Run Completed*
+        *Status:* ${{ job.status }}
+        *Repo:* ${{ github.repository }}
+        *Actor:* ${{ github.actor }}
+        *Time:* $(date -u)"
+
+
