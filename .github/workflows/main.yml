@@ -21,6 +21,9 @@ jobs:
       - name: 📂 Install dependencies
         run: npm install
 
+      - name: 🛠️ Install Newman htmlextra reporter
+        run: npm install -g newman-reporter-htmlextra
+
       - name: 📄 Generate unique CSV data
         run: node generate-csv.js
 
