@@ -41,15 +41,15 @@ jobs:
         if: always()
         run: |
           if [ "${{ job.status }}" = "success" ]; then
-            curl -s -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendDocument" \
-              -F chat_id=${{ secrets.TELEGRAM_CHAT_ID }} \
-              -F document=@newman-report.html \
-              -F caption="✅ *Newman Tests Passed*\nHere is the HTML report." \
-              -F parse_mode=Markdown
+          curl -s -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendDocument" \
+          -F chat_id=${{ secrets.TELEGRAM_CHAT_ID }} \
+          -F document=@newman-report.html \
+          -F caption="✅ *Newman Tests Passed*\nHere is the HTML report." \
+          -F parse_mode=Markdown || true
           else
-            curl -s -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendDocument" \
-              -F chat_id=${{ secrets.TELEGRAM_CHAT_ID }} \
-              -F document=@newman-report.json \
-              -F caption="❌ *Newman Tests Failed*\nHere is the JSON report for debugging." \
-              -F parse_mode=Markdown
+          curl -s -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendDocument" \
+          -F chat_id=${{ secrets.TELEGRAM_CHAT_ID }} \
+          -F document=@newman-report.json \
+          -F caption="❌ *Newman Tests Failed*\nHere is the JSON report for debugging." \
+          -F parse_mode=Markdown || true
           fi
