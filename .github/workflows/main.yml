@@ -1,60 +1,55 @@
----
-name: Run Newman Tests on Render API
-'on':
-  push:
-    branches:
-      - main
-  workflow_dispatch: null
+name: 🔁 Automated API Testing with CSV & Telegram
+
+on:
+  schedule:
+    - cron: '0 * * * *'  # Every hour
+  workflow_dispatch:
+
 jobs:
-  run-newman-tests:
+  run-tests:
     runs-on: ubuntu-latest
+
     steps:
-      - name: 📥 Checkout code
+      - name: ⬇️ Checkout code
         uses: actions/checkout@v3
-      - name: 🛠 Install Node.js
+
+      - name: 📦 Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '18'
-      - name: 📦 Install project dependencies (faker included)
+          node-version: 18
+
+      - name: 📂 Install dependencies
         run: npm install
-      - name: 📦 Install Newman
-        run: npm install -g newman
-      - name: 🧪 Generate CSV file
+
+      - name: 📄 Generate unique CSV data
         run: node generate-csv.js
+
+      - name: 🧹 Clean old test reports
+        run: |
+          rm -f newman-report.json newman-report.html || true
+
       - name: ✅ Run Newman tests
-  run: |
-    npx newman run upload-collection.json \
-      --env-var base_url=https://playing-with-api.onrender.com \
-      --env-var file=@temp.csv \
-      --reporters cli,json,htmlextra \
-      --reporter-json-export newman-report.json \
-      --reporter-htmlextra-export newman-report.html
+        run: |
+          npx newman run upload-collection.json \
+            --env-var base_url=https://playing-with-api.onrender.com \
+            --env-var file=@temp.csv \
+            --reporters cli,json,htmlextra \
+            --reporter-json-export newman-report.json \
+            --reporter-htmlextra-export newman-report.html
 
-    - name: 📎 Send report to Telegram
-      if: always()
-       run: |
-    if [ "${{ job.status }}" = "success" ]; then
-      curl -s -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendDocument" \
-        -F chat_id=${{ secrets.TELEGRAM_CHAT_ID }} \
-        -F document=@newman-report.html \
-        -F caption="✅ *Newman Tests Passed*\nHere is the HTML report." \
-        -F parse_mode=Markdown
-    else
-      curl -s -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendDocument" \
-        -F chat_id=${{ secrets.TELEGRAM_CHAT_ID }} \
-        -F document=@newman-report.json \
-        -F caption="❌ *Newman Tests Failed*\nHere is the JSON report for debugging." \
-        -F parse_mode=Markdown
-    fi
-
-    - name: 📲 Send Telegram Notification
-      if: always()
-      run: |
-        curl -s -X POST https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage \
-        -d chat_id=${{ secrets.TELEGRAM_CHAT_ID }} \
-        -d parse_mode=Markdown \
-        -d text="🧪 *Newman Test Run Completed*
-        *Status:* ${{ job.status }}
-        *Repo:* ${{ github.repository }}
-        *Actor:* ${{ github.actor }}
-        *Time:* $(date -u)"
+      - name: 📎 Send report to Telegram
+        if: always()
+        run: |
+          if [ "${{ job.status }}" = "success" ]; then
+            curl -s -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendDocument" \
+              -F chat_id=${{ secrets.TELEGRAM_CHAT_ID }} \
+              -F document=@newman-report.html \
+              -F caption="✅ *Newman Tests Passed*\nHere is the HTML report." \
+              -F parse_mode=Markdown
+          else
+            curl -s -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendDocument" \
+              -F chat_id=${{ secrets.TELEGRAM_CHAT_ID }} \
+              -F document=@newman-report.json \
+              -F caption="❌ *Newman Tests Failed*\nHere is the JSON report for debugging." \
+              -F parse_mode=Markdown
+          fi
