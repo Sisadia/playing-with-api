@@ -47,6 +47,9 @@ jobs:
             --reporter-json-export newman-report.json \
             --reporter-htmlextra-export newman-report.html
 
+      - name: 📁 List files in workspace
+        run: ls -lh
+
       - name: 📊 Extract test summary
         id: summary
         run: |
