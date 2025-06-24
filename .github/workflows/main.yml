@@ -2,7 +2,7 @@ name: 🔁 Automated API Testing with CSV & Telegram
 
 on:
   schedule:
-    - cron: '0 * * * *'  # Every hour
+    - cron: '0 * * * *'  # Runs every hour
   workflow_dispatch:
 
 jobs:
@@ -47,9 +47,4 @@ jobs:
               -F caption="✅ *Newman Tests Passed*\nHere is the HTML report." \
               -F parse_mode=Markdown
           else
-            curl -s -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendDocument" \
-              -F chat_id=${{ secrets.TELEGRAM_CHAT_ID }} \
-              -F document=@newman-report.json \
-              -F caption="❌ *Newman Tests Failed*\nHere is the JSON report for debugging." \
-              -F parse_mode=Markdown
-          fi
+            curl -s
