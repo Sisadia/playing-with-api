@@ -38,6 +38,15 @@ jobs:
           --reporters cli,json \
           --reporter-json-export newman-report.json
 
+    - name: 📎 Send newman-report.json to Telegram
+      if: always()
+      run: |
+        curl -s -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendDocument" \
+          -F chat_id=${{ secrets.TELEGRAM_CHAT_ID }} \
+          -F document=@newman-report.json \
+          -F caption="📊 *Newman Test Report*\nStatus: ${{ job.status }}" \
+          -F parse_mode=Markdown
+
     - name: 📲 Send Telegram Notification
       if: always()
       run: |
