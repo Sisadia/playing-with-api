@@ -1,7 +1,7 @@
 name: 🔁 Automated API Testing with CSV & Telegram
 
 on:
- push:
+  push:
     branches:
       - main
 
@@ -10,7 +10,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-
       - name: ⬇️ Checkout code
         uses: actions/checkout@v3
 
@@ -24,6 +23,13 @@ jobs:
 
       - name: 📄 Generate unique CSV data
         run: node generate-csv.js
+
+      - name: 🛡️ Check if CSV exists
+        run: |
+          if [ ! -f temp.csv ]; then
+            echo "CSV file not found! Failing the build."
+            exit 1
+          fi
 
       - name: 🧹 Clean old test reports
         run: |
@@ -41,16 +47,20 @@ jobs:
       - name: 📊 Extract test summary
         id: summary
         run: |
-         PASSED=$(jq '.run.executions | map(select(.assertions[]?.error == null)) | length' newman-report.json)
-         FAILED=$(jq '.run.executions | map(select(.assertions[]?.error != null)) | length' newman-report.json)
-         echo "passed=$PASSED" >> $GITHUB_OUTPUT
-         echo "failed=$FAILED" >> $GITHUB_OUTPUT
-      
+          PASSED=$(jq '.run.executions | map(select(.assertions[]?.error == null)) | length' newman-report.json)
+          FAILED=$(jq '.run.executions | map(select(.assertions[]?.error != null)) | length' newman-report.json)
+          echo "passed=$PASSED" >> $GITHUB_OUTPUT
+          echo "failed=$FAILED" >> $GITHUB_OUTPUT
+
       - name: 📎 Send HTML report to Telegram
         if: always()
         run: |
-         curl -s -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendDocument" \
-           -F chat_id=${{ secrets.TELEGRAM_CHAT_ID }} \
-           -F document=@newman-report.html \
-           -F caption="📊 *Newman Test Report*\nStatus: ${{ job.status }}" \
-           -F parse_mode=Markdown
+          if [ ! -f newman-report.html ]; then
+            echo "newman-report.html not found, skipping Telegram upload."
+            exit 0
+          fi
+          curl -s -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendDocument" \
+            -F chat_id=${{ secrets.TELEGRAM_CHAT_ID }} \
+            -F document=@newman-report.html \
+            -F caption="📊 *Newman Test Report*\nStatus: ${{ job.status }}" \
+            -F parse_mode=Markdown
