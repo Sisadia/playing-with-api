@@ -1,7 +1,7 @@
 const fs = require('fs');
-const faker = require('faker'); // version 5.5.3
+const faker = require('faker');
 
-const NUM_RECORDS = 2; // change this as needed
+const NUM_RECORDS = 2;
 
 const header = `"Employee Id","First Name","Last Name","Email Address"\n`;
 let rows = '';
@@ -26,7 +26,7 @@ const usedEmployeeIds = new Set();
 function generateUniqueEmployeeId() {
   let id;
   do {
-    id = `HAYHAH${Math.floor(1000 + Math.random() * 9000)}`;
+    id = `EMP${Math.floor(1000 + Math.random() * 9000)}`;
   } while (usedEmployeeIds.has(id));
   usedEmployeeIds.add(id);
   return id;
