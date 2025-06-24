@@ -38,7 +38,6 @@ jobs:
           --reporters cli,json \
           --reporter-json-export newman-report.json
 
-
     - name: 📲 Send Telegram Notification
       if: always()
       run: |
@@ -50,5 +49,3 @@ jobs:
         *Repo:* ${{ github.repository }}
         *Actor:* ${{ github.actor }}
         *Time:* $(date -u)"
-
-
