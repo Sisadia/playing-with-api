@@ -47,7 +47,7 @@ This setup is currently being tested and **will be implemented in the real proje
 ## 📁 Project Structure
 
 ```bash
-csv-upload-api/
+playing-with-api/
 ├── .github/workflows/
 │   └── api-test.yml              # GitHub Actions workflow
 ├── uploads/                      # Uploaded CSVs (if any)
