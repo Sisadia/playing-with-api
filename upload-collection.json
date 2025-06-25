@@ -22,7 +22,7 @@
 						{
 							"key": "file",
 							"type": "file",
-							"src": "Self/csv-upload-api/git/temp.csv"
+							"src": "{{file}}"
 						}
 					]
 				},
