@@ -22,7 +22,7 @@
 						{
 							"key": "file",
 							"type": "file",
-							"src": "{{file}}"
+							"src": "temp.csv"
 						}
 					]
 				},
