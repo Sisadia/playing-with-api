@@ -43,6 +43,9 @@ jobs:
         run: |
           rm -f newman-report.json newman-report.html || true
 
+      - name: 🧐 Show temp.csv location
+        run: find . -name temp.csv
+
       - name: ✅ Run Newman tests
         run: |
           npx newman run upload-collection.json \
